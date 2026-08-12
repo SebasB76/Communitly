@@ -1,0 +1,37 @@
+# --- Sistema operativo / editores ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+
+# --- Flutter / Dart ---
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+
+# --- Python / Django ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+*.sqlite3
+*.sqlite3-journal
+/staticfiles/
+/media/
+.mypy_cache/
+.pytest_cache/
+
+# --- Entorno / secretos ---
+.env
+.env.*
+!.env.example
+*.log
