@@ -16,6 +16,8 @@ class Comunidad(models.Model):
     contacto = models.EmailField(blank=True)
     activa = models.BooleanField(default=True)
     creada_en = models.DateTimeField(auto_now_add=True)
+    # responsables de la comunidad; controlan eventos (RF-04) y solicitudes (RF-06)
+    gestores = models.ManyToManyField(User, related_name='comunidades_gestionadas', blank=True)
 
     class Meta:
         ordering = ['nombre']
