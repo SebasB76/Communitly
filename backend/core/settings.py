@@ -27,8 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# El navegador bloquea las peticiones del frontend porque corre en otro puerto.
-# Se permiten todos los origenes solo mientras el proyecto esta en desarrollo.
 CORS_ALLOW_ALL_ORIGINS = True
 
 
@@ -41,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # permite que el frontend Flutter consuma la API desde otro puerto
     'corsheaders',
     # apps del proyecto
     'comunidades',
@@ -51,7 +48,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # va antes de CommonMiddleware para poder responder el preflight del navegador
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
