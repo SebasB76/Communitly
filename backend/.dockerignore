@@ -1,0 +1,21 @@
+# Entorno virtual de Windows: no sirve dentro del contenedor Linux
+.venv/
+venv/
+env/
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+# La base se crea con migrate dentro del contenedor
+db.sqlite3
+*.sqlite3
+*.sqlite3-journal
+
+.git/
+.gitignore
+.pytest_cache/
+.mypy_cache/
+*.log
+Dockerfile
+.dockerignore

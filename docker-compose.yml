@@ -1,0 +1,60 @@
+# Los puertos del host se pueden cambiar sin tocar este archivo: copia
+# .env.example a .env y ajusta los valores (ver DOCKER.md).
+services:
+  backend:
+    build: ./backend
+    container_name: communitly-backend
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      # SEED_DATA=0 arranca sin cargar los datos de ejemplo
+      SEED_DATA: "1"
+    volumes:
+      # Codigo montado en vivo: runserver recarga solo al guardar
+      - ./backend:/app
+      # Tapa el .venv de Windows para que no entre al contenedor Linux
+      - /app/.venv
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/api/comunidades/?estudiante_id=1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # El navegador corre en el host, por eso usa el puerto publicado
+        API_BASE: http://localhost:${BACKEND_PORT:-8000}/api
+    container_name: communitly-frontend
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    depends_on:
+      - backend
+
+  # Perfil dev: Flutter en modo desarrollo, sin instalar el SDK en la maquina.
+  # docker compose --profile dev up frontend-dev
+  frontend-dev:
+    profiles: ["dev"]
+    build:
+      context: ./frontend
+      # Solo el SDK, sin compilar: el codigo llega por volumen
+      target: sdk
+    container_name: communitly-frontend-dev
+    working_dir: /app
+    # En una sola linea a proposito: con el bloque plegado de YAML, las lineas
+    # mas indentadas conservan el salto y sh las toma como comandos sueltos.
+    command: sh -c "flutter pub get && flutter run -d web-server --web-hostname 0.0.0.0 --web-port 8080 --dart-define=API_BASE=http://localhost:${BACKEND_PORT:-8000}/api"
+    ports:
+      - "${FRONTEND_DEV_PORT:-8081}:8080"
+    volumes:
+      - ./frontend:/app
+      - flutter-pub-cache:/root/.pub-cache
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend
+
+volumes:
+  flutter-pub-cache:
