@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     # apps del proyecto
+    'cuentas',
     'comunidades',
     'eventos',
     'solicitudes',
