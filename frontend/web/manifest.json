@@ -1,12 +1,13 @@
 {
-    "name": "communitly_frontend",
-    "short_name": "communitly_frontend",
+    "name": "ESPOL Communities",
+    "short_name": "Communities",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#F3F5F8",
+    "theme_color": "#123B63",
+    "description": "Catálogo de comunidades estudiantiles de la ESPOL: descubre, sigue y postula a las comunidades que te interesan.",
+    "lang": "es",
+    "orientation": "any",
     "prefer_related_applications": false,
     "icons": [
         {
