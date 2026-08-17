@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../modelos/comunidad.dart';
 import '../servicios/api.dart';
 import 'detalle.dart';
+import 'eventos.dart';
 
 class PantallaCatalogo extends StatefulWidget {
   const PantallaCatalogo({super.key});
@@ -74,6 +75,18 @@ class _PantallaCatalogoState extends State<PantallaCatalogo> {
         title: const Text('ESPOL Communities'),
         backgroundColor: const Color(0xFF123B63),
         foregroundColor: Colors.white,
+        actions: [
+          TextButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const PantallaEventos()),
+              );
+            },
+            icon: const Icon(Icons.event, color: Colors.white),
+            label: const Text('Eventos', style: TextStyle(color: Colors.white)),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),

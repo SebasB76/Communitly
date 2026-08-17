@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../modelos/comunidad.dart';
 import '../servicios/api.dart';
+import 'eventos.dart';
 
 class PantallaDetalle extends StatefulWidget {
   final int comunidadId;
@@ -122,6 +123,22 @@ class _PantallaDetalleState extends State<PantallaDetalle> {
             ],
           ),
           const SizedBox(height: 36),
+          OutlinedButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PantallaEventos(
+                    comunidadId: comunidad.id,
+                    comunidadNombre: comunidad.nombre,
+                  ),
+                ),
+              );
+            },
+            icon: const Icon(Icons.event),
+            label: const Text('Ver eventos de esta comunidad'),
+          ),
+          const SizedBox(height: 24),
           const Text(
             'Acerca de la comunidad',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
