@@ -4,11 +4,11 @@ class Evento {
   final String descripcion;
   final int comunidadId;
   final String comunidadNombre;
-  final String fecha; // formato YYYY-MM-DD (tal como lo entrega Django)
-  final String hora; // formato HH:MM
+  final String fecha; 
+  final String hora; 
   final String lugar;
   final int? cupo;
-  final String estado; // 'activo' | 'cancelado'
+  final String estado;
   final int? gestorId;
 
   Evento({
@@ -27,7 +27,6 @@ class Evento {
 
   bool get cancelado => estado == 'cancelado';
 
-  /// Convierte 'YYYY-MM-DD' a DateTime para poder ordenar/formatear en la UI.
   DateTime get fechaComoDateTime => DateTime.parse(fecha);
 
   factory Evento.desdeJson(Map<String, dynamic> json) {
