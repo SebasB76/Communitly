@@ -84,6 +84,23 @@ class ClienteApi {
     );
   }
 
+  static Future<Map<String, dynamic>> parchear(
+    String ruta, {
+    Map<String, dynamic> cuerpo = const {},
+    int esperado = 200,
+    required String errorPorDefecto,
+  }) {
+    return _enviar(
+      () => cliente.patch(
+        _uri(ruta, const {}),
+        headers: _cabecerasJson,
+        body: jsonEncode(cuerpo),
+      ),
+      esperado: esperado,
+      errorPorDefecto: errorPorDefecto,
+    );
+  }
+
   static Future<Map<String, dynamic>> eliminar(
     String ruta, {
     Map<String, dynamic> cuerpo = const {},

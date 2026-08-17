@@ -14,6 +14,16 @@ extension LecturaJson on Map<String, dynamic> {
     return porDefecto;
   }
 
+  /// Entero opcional: distingue "no vino" de "vino cero". Lo necesitan los
+  /// campos que el backend deja en null, como el cupo de un evento.
+  int? enteroONulo(String clave) {
+    final valor = this[clave];
+    if (valor is int) return valor;
+    if (valor is num) return valor.toInt();
+    if (valor is String) return int.tryParse(valor);
+    return null;
+  }
+
   String texto(String clave, {String porDefecto = ''}) {
     final valor = this[clave];
     if (valor is String) return valor;

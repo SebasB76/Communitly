@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -9,6 +11,7 @@ import '../servicios/sesion.dart';
 import '../tema/tema.dart';
 import '../widgets/esqueletos.dart';
 import '../widgets/vista_async.dart';
+import 'eventos.dart';
 import 'solicitudes_widgets.dart';
 
 class PantallaDetalle extends StatefulWidget {
@@ -125,7 +128,30 @@ class _PantallaDetalleState extends State<PantallaDetalle> {
           ),
         ),
         const SizedBox(height: 24),
-        _accionesSolicitud(comunidad),
+        // Las dos acciones de comunidad, en un Wrap para que no se desborden
+        // en pantallas estrechas.
+        Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            _accionesSolicitud(comunidad),
+            // RF-03: eventos de esta comunidad.
+            OutlinedButton.icon(
+              onPressed: () => unawaited(Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (_) => PantallaEventos(
+                    comunidadId: comunidad.id,
+                    comunidadNombre: comunidad.nombre,
+                  ),
+                ),
+              )),
+              icon: const Icon(Icons.event),
+              label: const Text('Ver eventos de esta comunidad'),
+            ),
+          ],
+        ),
         const SizedBox(height: 36),
         Text('Acerca de la comunidad', style: context.textos.titleLarge),
         const SizedBox(height: 8),

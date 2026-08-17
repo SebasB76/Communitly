@@ -13,6 +13,7 @@ import '../tema/tema.dart';
 import '../widgets/esqueletos.dart';
 import '../widgets/rejilla_responsiva.dart';
 import '../widgets/vista_async.dart';
+import 'eventos.dart';
 
 /// RF-01 a RF-03: catálogo de comunidades con búsqueda y filtro por categoría.
 class PantallaCatalogo extends StatefulWidget {
@@ -112,6 +113,16 @@ class _PantallaCatalogoState extends State<PantallaCatalogo> {
       appBar: AppBar(
         title: const Text('ESPOL Communities'),
         actions: [
+          // RF-03: entrada al modulo de eventos. Sin colores fijos, para que
+          // siga el tema claro u oscuro como el resto de la barra.
+          TextButton.icon(
+            onPressed: () => unawaited(Navigator.push(
+              context,
+              MaterialPageRoute<void>(builder: (_) => const PantallaEventos()),
+            )),
+            icon: const Icon(Icons.event),
+            label: const Text('Eventos'),
+          ),
           IconButton(
             onPressed: () =>
                 PreferenciasUi.alternar(Theme.of(context).brightness),
