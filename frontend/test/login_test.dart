@@ -138,6 +138,10 @@ void main() {
     await asentar(tester);
     expect(find.text('Descubre tu próxima comunidad'), findsOneWidget);
 
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
     await tester.tap(find.byIcon(Icons.logout));
     await asentar(tester);
     await asentar(tester);

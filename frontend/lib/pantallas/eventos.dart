@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../estado/estado_async.dart';
 import '../modelos/evento.dart';
+import '../rutas/rutas.dart';
 import '../servicios/api.dart';
-import 'evento_detalle.dart';
+import '../servicios/sesion.dart';
+import '../tema/tema.dart';
+import '../utilidades/fechas.dart';
+import '../widgets/esqueletos.dart';
+import '../widgets/rejilla_responsiva.dart';
+import '../widgets/vista_async.dart';
 import 'evento_formulario.dart';
+import 'eventos_widgets.dart';
 
+/// RF-03: eventos de todas las comunidades o de una sola.
 class PantallaEventos extends StatefulWidget {
   final int? comunidadId;
   final String? comunidadNombre;
@@ -16,10 +26,16 @@ class PantallaEventos extends StatefulWidget {
 }
 
 class _PantallaEventosState extends State<PantallaEventos> {
-  List<Evento> _eventos = [];
+  Estado<List<Evento>> _estado = const Cargando();
   DateTime? _fechaFiltro;
-  bool _cargando = true;
-  String _error = '';
+
+  int _ultimaPeticion = 0;
+
+  /// RF-04: crear solo se ofrece a quien gestiona. El backend vuelve a
+  /// comprobarlo y responde 403 si no corresponde.
+  bool get _puedeCrear => widget.comunidadId == null
+      ? Sesion.esGestor
+      : Sesion.gestiona(widget.comunidadId!);
 
   @override
   void initState() {
@@ -28,29 +44,23 @@ class _PantallaEventosState extends State<PantallaEventos> {
   }
 
   Future<void> _cargar() async {
-    setState(() {
-      _cargando = true;
-      _error = '';
-    });
+    final peticion = ++_ultimaPeticion;
+    setState(() => _estado = const Cargando());
 
     try {
       final lista = await Api.listarEventos(
         comunidadId: widget.comunidadId,
-        fecha: _fechaFiltro == null ? '' : _formatearFecha(_fechaFiltro!),
+        fecha: _fechaFiltro == null ? '' : _comoIso(_fechaFiltro!),
       );
-      setState(() {
-        _eventos = lista;
-        _cargando = false;
-      });
-    } catch (e) {
-      setState(() {
-        _error = 'No se pudo conectar con el servidor. ¿Está corriendo Django?';
-        _cargando = false;
-      });
+      if (!mounted || peticion != _ultimaPeticion) return;
+      setState(() => _estado = ConDatos(lista));
+    } catch (error) {
+      if (!mounted || peticion != _ultimaPeticion) return;
+      setState(() => _estado = ConError.desde(error));
     }
   }
 
-  String _formatearFecha(DateTime fecha) {
+  String _comoIso(DateTime fecha) {
     final mes = fecha.month.toString().padLeft(2, '0');
     final dia = fecha.day.toString().padLeft(2, '0');
     return '${fecha.year}-$mes-$dia';
@@ -63,10 +73,10 @@ class _PantallaEventosState extends State<PantallaEventos> {
       firstDate: DateTime.now().subtract(const Duration(days: 365)),
       lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
     );
-    if (seleccionada != null) {
-      setState(() => _fechaFiltro = seleccionada);
-      await _cargar();
-    }
+    if (seleccionada == null) return;
+
+    setState(() => _fechaFiltro = seleccionada);
+    await _cargar();
   }
 
   void _limpiarFecha() {
@@ -75,13 +85,8 @@ class _PantallaEventosState extends State<PantallaEventos> {
   }
 
   Future<void> _abrirDetalle(int id) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (_) => PantallaEventoDetalle(eventoId: id),
-      ),
-    );
-    await _cargar();
+    await context.push<void>(Rutas.evento(id));
+    if (mounted) await _cargar();
   }
 
   Future<void> _crearEvento() async {
@@ -94,43 +99,59 @@ class _PantallaEventosState extends State<PantallaEventos> {
         ),
       ),
     );
-    await _cargar();
+    if (mounted) await _cargar();
   }
 
   @override
   Widget build(BuildContext context) {
+    final nombre = widget.comunidadNombre;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.comunidadNombre != null
-              ? 'Eventos · ${widget.comunidadNombre}'
-              : 'Eventos',
-        ),
-        backgroundColor: const Color(0xFF123B63),
-        foregroundColor: Colors.white,
+        title: Text(nombre == null ? 'Eventos' : 'Eventos · $nombre'),
+        actions: [
+          IconButton(
+            onPressed: _estado is Cargando ? null : _cargar,
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Actualizar',
+          ),
+        ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _crearEvento,
-        icon: const Icon(Icons.add),
-        label: const Text('Nuevo evento'),
-      ),
+      floatingActionButton: _puedeCrear
+          ? FloatingActionButton.extended(
+              onPressed: _crearEvento,
+              icon: const Icon(Icons.add),
+              label: const Text('Nuevo evento'),
+            )
+          : null,
       body: RefreshIndicator(
         onRefresh: _cargar,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Próximos eventos',
-                style: Theme.of(context).textTheme.headlineMedium,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1200),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Próximos eventos',
+                    style: context.textos.headlineMedium,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'Actividades que publican las comunidades de la ESPOL.',
+                    style: context.textos.bodyMedium
+                        ?.copyWith(color: context.textoSecundario),
+                  ),
+                  const SizedBox(height: 20),
+                  _filtroFecha(),
+                  const SizedBox(height: 24),
+                  _resultados(),
+                ],
               ),
-              const SizedBox(height: 16),
-              _filtroFecha(),
-              const SizedBox(height: 24),
-              _resultados(),
-            ],
+            ),
           ),
         ),
       ),
@@ -138,20 +159,21 @@ class _PantallaEventosState extends State<PantallaEventos> {
   }
 
   Widget _filtroFecha() {
+    final fecha = _fechaFiltro;
+
     return Wrap(
       spacing: 12,
+      runSpacing: 12,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         OutlinedButton.icon(
           onPressed: _elegirFecha,
           icon: const Icon(Icons.calendar_month),
           label: Text(
-            _fechaFiltro == null
-                ? 'Filtrar por fecha'
-                : _formatearFecha(_fechaFiltro!),
+            fecha == null ? 'Filtrar por fecha' : Fechas.conDiaSemana(fecha),
           ),
         ),
-        if (_fechaFiltro != null)
+        if (fecha != null)
           TextButton(
             onPressed: _limpiarFecha,
             child: const Text('Quitar filtro'),
@@ -161,64 +183,45 @@ class _PantallaEventosState extends State<PantallaEventos> {
   }
 
   Widget _resultados() {
-    if (_cargando) {
-      return const Padding(
-        padding: EdgeInsets.all(48),
-        child: Center(child: CircularProgressIndicator()),
-      );
-    }
+    final hayFiltro = _fechaFiltro != null;
 
-    if (_error.isNotEmpty) {
-      return Padding(
-        padding: const EdgeInsets.all(48),
-        child: Center(child: Text(_error)),
-      );
-    }
-
-    if (_eventos.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.all(48),
-        child: Center(child: Text('No hay eventos próximos')),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '${_eventos.length} eventos encontrados',
-          style: const TextStyle(color: Colors.black54),
-        ),
-        const SizedBox(height: 12),
-        ..._eventos.map(_tarjeta),
-      ],
-    );
-  }
-
-  Widget _tarjeta(Evento evento) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        onTap: () => _abrirDetalle(evento.id),
-        title: Text(
-          evento.titulo,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Text(
-            '${evento.fecha} · ${evento.hora}  ·  ${evento.lugar}\n'
-            '${evento.comunidadNombre}'
-            '${evento.cupo != null ? ' · Cupo: ${evento.cupo}' : ''}',
+    return VistaAsync<List<Evento>>(
+      estado: _estado,
+      cargando: const EsqueletoRejilla(
+        cantidad: 4,
+        anchoMinimo: 420,
+        plantilla: EsqueletoEvento(),
+      ),
+      alReintentar: _cargar,
+      estaVacio: (lista) => lista.isEmpty,
+      iconoVacio: Icons.event_busy_outlined,
+      tituloVacio:
+          hayFiltro ? 'No hay eventos ese día' : 'No hay eventos próximos',
+      detalleVacio: hayFiltro
+          ? 'Prueba con otra fecha o quita el filtro.'
+          : 'Cuando una comunidad publique uno, aparecerá aquí.',
+      textoAccionVacio: hayFiltro ? 'Quitar filtro' : null,
+      alPulsarAccionVacio: hayFiltro ? _limpiarFecha : null,
+      constructor: (context, lista) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            lista.length == 1 ? '1 evento' : '${lista.length} eventos',
+            style: context.textos.bodyMedium
+                ?.copyWith(color: context.textoSecundario),
           ),
-        ),
-        isThreeLine: true,
-        trailing: evento.cancelado
-            ? const Chip(
-                label: Text('Cancelado'),
-                backgroundColor: Color(0xFFFCE4E4),
-              )
-            : const Icon(Icons.chevron_right),
+          const SizedBox(height: 12),
+          RejillaResponsiva(
+            anchoMinimo: 420,
+            hijos: [
+              for (final evento in lista)
+                TarjetaEvento(
+                  evento: evento,
+                  alPulsar: () => _abrirDetalle(evento.id),
+                ),
+            ],
+          ),
+        ],
       ),
     );
   }

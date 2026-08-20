@@ -29,7 +29,7 @@ class Evento {
 
   bool get cancelado => estado == 'cancelado';
 
-  DateTime get fechaComoDateTime => DateTime.parse(fecha);
+  DateTime? get fechaComoDateTime => DateTime.tryParse(fecha);
 
   factory Evento.desdeJson(Map<String, dynamic> json) {
     return Evento(

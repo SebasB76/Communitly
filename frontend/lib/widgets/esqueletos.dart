@@ -100,11 +100,13 @@ class EsqueletoTarjeta extends StatelessWidget {
 class EsqueletoRejilla extends StatelessWidget {
   final int cantidad;
   final double anchoMinimo;
+  final Widget plantilla;
 
   const EsqueletoRejilla({
     super.key,
     this.cantidad = 6,
     this.anchoMinimo = 320,
+    this.plantilla = const EsqueletoTarjeta(),
   });
 
   @override
@@ -113,7 +115,43 @@ class EsqueletoRejilla extends StatelessWidget {
       label: 'Cargando contenido',
       child: RejillaResponsiva(
         anchoMinimo: anchoMinimo,
-        hijos: List.generate(cantidad, (_) => const EsqueletoTarjeta()),
+        hijos: List.generate(cantidad, (_) => plantilla),
+      ),
+    );
+  }
+}
+
+class EsqueletoEvento extends StatelessWidget {
+  const EsqueletoEvento({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Card(
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Esqueleto(
+              ancho: 60,
+              alto: 68,
+              radio: BorderRadius.all(Radius.circular(12)),
+            ),
+            SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Esqueleto(ancho: 170, alto: 18),
+                  SizedBox(height: 10),
+                  Esqueleto(ancho: 90, alto: 12),
+                  SizedBox(height: 14),
+                  Esqueleto(alto: 12),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

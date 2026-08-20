@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../estado/estado_async.dart';
 import '../modelos/comunidad.dart';
+import '../modelos/usuario.dart';
 import '../rutas/rutas.dart';
 import '../servicios/api.dart';
 import '../servicios/preferencias.dart';
@@ -14,7 +15,6 @@ import '../widgets/esqueletos.dart';
 import '../widgets/logo_comunidad.dart';
 import '../widgets/rejilla_responsiva.dart';
 import '../widgets/vista_async.dart';
-import 'eventos.dart';
 
 /// RF-01 a RF-03: catálogo de comunidades con búsqueda y filtro por categoría.
 class PantallaCatalogo extends StatefulWidget {
@@ -114,36 +114,15 @@ class _PantallaCatalogoState extends State<PantallaCatalogo> {
       appBar: AppBar(
         title: const Text('ESPOL Communities'),
         actions: [
-          // RF-03: entrada al modulo de eventos. Sin colores fijos, para que
-          // siga el tema claro u oscuro como el resto de la barra.
-          TextButton.icon(
-            onPressed: () => unawaited(Navigator.push(
-              context,
-              MaterialPageRoute<void>(builder: (_) => const PantallaEventos()),
-            )),
+          // RF-03: entrada al modulo de eventos, la unica accion que queda
+          // visible. El resto va al menu para que el titulo no se corte en un
+          // telefono de 360 px.
+          IconButton(
+            onPressed: () => context.push(Rutas.eventos),
             icon: const Icon(Icons.event),
-            label: const Text('Eventos'),
+            tooltip: 'Eventos',
           ),
-          IconButton(
-            onPressed: () =>
-                PreferenciasUi.alternar(Theme.of(context).brightness),
-            icon: Icon(Theme.of(context).brightness == Brightness.dark
-                ? Icons.light_mode_outlined
-                : Icons.dark_mode_outlined),
-            tooltip: 'Cambiar el tema',
-          ),
-          IconButton(
-            onPressed: () => context.push(Rutas.solicitudes),
-            icon: const Icon(Icons.assignment_outlined),
-            tooltip: 'Mis solicitudes',
-          ),
-          IconButton(
-            onPressed: Sesion.cerrar,
-            icon: const Icon(Icons.logout),
-            tooltip: usuario == null
-                ? 'Cerrar sesión'
-                : 'Cerrar sesión (${usuario.usuario})',
-          ),
+          _menu(usuario),
         ],
       ),
       body: RefreshIndicator(
@@ -183,6 +162,54 @@ class _PantallaCatalogoState extends State<PantallaCatalogo> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _menu(UsuarioSesion? usuario) {
+    final esOscuro = Theme.of(context).brightness == Brightness.dark;
+
+    return PopupMenuButton<String>(
+      tooltip: 'Más opciones',
+      onSelected: (opcion) {
+        switch (opcion) {
+          case 'tema':
+            PreferenciasUi.alternar(Theme.of(context).brightness);
+          case 'solicitudes':
+            context.push(Rutas.solicitudes);
+          case 'salir':
+            Sesion.cerrar();
+        }
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 'tema',
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(esOscuro
+                ? Icons.light_mode_outlined
+                : Icons.dark_mode_outlined),
+            title: Text(esOscuro ? 'Tema claro' : 'Tema oscuro'),
+          ),
+        ),
+        const PopupMenuItem(
+          value: 'solicitudes',
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(Icons.assignment_outlined),
+            title: Text('Mis solicitudes'),
+          ),
+        ),
+        PopupMenuItem(
+          value: 'salir',
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.logout),
+            title: Text(usuario == null
+                ? 'Cerrar sesión'
+                : 'Cerrar sesión (${usuario.usuario})'),
+          ),
+        ),
+      ],
     );
   }
 

@@ -5,6 +5,9 @@ import '../modelos/solicitud.dart';
 import '../servicios/api_solicitudes.dart';
 import '../tema/tema.dart';
 import '../utilidades/fechas.dart';
+import '../widgets/aviso.dart';
+
+export '../widgets/aviso.dart';
 
 /// Piezas compartidas por las pantallas del RF-05 y RF-06.
 
@@ -429,37 +432,4 @@ class _BotonSolicitarIngresoState extends State<BotonSolicitarIngreso> {
       label: const Text('Solicitar ingreso'),
     );
   }
-}
-
-/// Aviso al pie de la pantalla. Los errores se distinguen del resto por color e
-/// icono, en vez de compartir el mismo SnackBar neutro que una confirmación.
-void mostrarAviso(BuildContext context, String mensaje, {bool esError = false}) {
-  final colores = Theme.of(context).colorScheme;
-
-  ScaffoldMessenger.of(context)
-    ..hideCurrentSnackBar()
-    ..showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(
-              esError ? Icons.error_outline : Icons.check_circle_outline,
-              color: esError ? colores.onErrorContainer : null,
-              size: 20,
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                mensaje,
-                style: esError
-                    ? TextStyle(color: colores.onErrorContainer)
-                    : null,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: esError ? colores.errorContainer : null,
-        duration: Duration(seconds: esError ? 6 : 3),
-      ),
-    );
 }

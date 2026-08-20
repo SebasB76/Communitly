@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../pantallas/bandeja_gestor.dart';
 import '../pantallas/catalogo.dart';
 import '../pantallas/detalle.dart';
+import '../pantallas/evento_detalle.dart';
+import '../pantallas/eventos.dart';
 import '../pantallas/login.dart';
 import '../pantallas/mis_solicitudes.dart';
 import '../servicios/sesion.dart';
@@ -16,10 +18,15 @@ class Rutas {
   static const String login = '/login';
   static const String catalogo = '/catalogo';
   static const String solicitudes = '/solicitudes';
+  static const String eventos = '/eventos';
 
   static String comunidad(int id) => '/comunidad/$id';
 
   static String bandeja(int id) => '/comunidad/$id/bandeja';
+
+  static String evento(int id) => '/evento/$id';
+
+  static String eventosDeComunidad(int id) => '/comunidad/$id/eventos';
 }
 
 /// Enrutador de la aplicación.
@@ -83,6 +90,22 @@ GoRouter crearEnrutador() {
             const PantallaMisSolicitudes(),
       ),
       GoRoute(
+        path: Rutas.eventos,
+        name: 'eventos',
+        builder: (BuildContext context, GoRouterState estado) =>
+            const PantallaEventos(),
+      ),
+      GoRoute(
+        path: '/evento/:id',
+        name: 'evento',
+        redirect: (BuildContext context, GoRouterState estado) =>
+            _idValido(estado.pathParameters['id']) ? null : Rutas.eventos,
+        builder: (BuildContext context, GoRouterState estado) =>
+            PantallaEventoDetalle(
+          eventoId: int.parse(estado.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
         path: '/comunidad/:id',
         name: 'comunidad',
         redirect: (BuildContext context, GoRouterState estado) =>
@@ -97,6 +120,15 @@ GoRouter crearEnrutador() {
             builder: (BuildContext context, GoRouterState estado) =>
                 PantallaBandejaGestor(
               comunidadId: int.parse(estado.pathParameters['id']!),
+            ),
+          ),
+          GoRoute(
+            path: 'eventos',
+            name: 'eventos-comunidad',
+            builder: (BuildContext context, GoRouterState estado) =>
+                PantallaEventos(
+              comunidadId: int.parse(estado.pathParameters['id']!),
+              comunidadNombre: estado.extra as String?,
             ),
           ),
         ],

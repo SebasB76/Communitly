@@ -63,6 +63,8 @@ class ColoresEstado extends ThemeExtension<ColoresEstado> {
     retirada: ParEstado(Color(0xFFCBCED1), Color(0xFF2B2E30)),
   );
 
+  ParEstado get cancelado => rechazada;
+
   ParEstado porEstado(String estado) {
     return switch (estado) {
       'pendiente' => pendiente,

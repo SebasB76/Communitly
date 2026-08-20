@@ -12,7 +12,6 @@ import '../tema/tema.dart';
 import '../widgets/esqueletos.dart';
 import '../widgets/logo_comunidad.dart';
 import '../widgets/vista_async.dart';
-import 'eventos.dart';
 import 'solicitudes_widgets.dart';
 
 class PantallaDetalle extends StatefulWidget {
@@ -143,17 +142,14 @@ class _PantallaDetalleState extends State<PantallaDetalle> {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             _accionesSolicitud(comunidad),
-            // RF-03: eventos de esta comunidad.
+            // RF-03: eventos de esta comunidad. El nombre viaja como `extra`
+            // porque no está en la URL; con un enlace directo la pantalla se
+            // titula solo "Eventos".
             OutlinedButton.icon(
-              onPressed: () => unawaited(Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (_) => PantallaEventos(
-                    comunidadId: comunidad.id,
-                    comunidadNombre: comunidad.nombre,
-                  ),
-                ),
-              )),
+              onPressed: () => context.push<void>(
+                Rutas.eventosDeComunidad(comunidad.id),
+                extra: comunidad.nombre,
+              ),
               icon: const Icon(Icons.event),
               label: const Text('Ver eventos de esta comunidad'),
             ),

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../estado/estado_async.dart';
 import '../modelos/comunidad.dart';
 import '../modelos/evento.dart';
 import '../servicios/api.dart';
+import '../tema/tema.dart';
+import '../utilidades/fechas.dart';
+import '../widgets/aviso.dart';
 
 class PantallaEventoFormulario extends StatefulWidget {
   final int? comunidadId;
@@ -166,13 +170,40 @@ class _PantallaEventoFormularioState extends State<PantallaEventoFormulario> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _guardando = false);
-      _avisar(e.toString().replaceFirst('Exception: ', ''));
+      _avisar(mensajeDeFalla(e), esError: true);
     }
   }
 
-  void _avisar(String mensaje) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(mensaje)));
+  void _avisar(String mensaje, {bool esError = false}) {
+    if (!mounted) return;
+    mostrarAviso(context, mensaje, esError: esError);
+  }
+
+  Widget _mensajeError() {
+    return Semantics(
+      liveRegion: true,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: context.colores.errorContainer,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.error_outline,
+                size: 20, color: context.colores.onErrorContainer),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                _error,
+                style: TextStyle(color: context.colores.onErrorContainer),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -180,8 +211,6 @@ class _PantallaEventoFormularioState extends State<PantallaEventoFormulario> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.esEdicion ? 'Editar evento' : 'Nuevo evento'),
-        backgroundColor: const Color(0xFF123B63),
-        foregroundColor: Colors.white,
       ),
       body: _cargandoComunidades
           ? const Center(child: CircularProgressIndicator())
@@ -195,7 +224,7 @@ class _PantallaEventoFormularioState extends State<PantallaEventoFormulario> {
                     if (_error.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16),
-                        child: Text(_error, style: const TextStyle(color: Colors.red)),
+                        child: _mensajeError(),
                       ),
                     _campoComunidad(),
                     const SizedBox(height: 16),
@@ -203,7 +232,6 @@ class _PantallaEventoFormularioState extends State<PantallaEventoFormulario> {
                       controller: _tituloCtrl,
                       decoration: const InputDecoration(
                         labelText: 'Título',
-                        border: OutlineInputBorder(),
                       ),
                       validator: (v) =>
                           (v == null || v.trim().isEmpty) ? 'Obligatorio' : null,
@@ -214,7 +242,6 @@ class _PantallaEventoFormularioState extends State<PantallaEventoFormulario> {
                       maxLines: 4,
                       decoration: const InputDecoration(
                         labelText: 'Descripción',
-                        border: OutlineInputBorder(),
                       ),
                       validator: (v) =>
                           (v == null || v.trim().isEmpty) ? 'Obligatorio' : null,
@@ -224,7 +251,6 @@ class _PantallaEventoFormularioState extends State<PantallaEventoFormulario> {
                       controller: _lugarCtrl,
                       decoration: const InputDecoration(
                         labelText: 'Lugar',
-                        border: OutlineInputBorder(),
                       ),
                       validator: (v) =>
                           (v == null || v.trim().isEmpty) ? 'Obligatorio' : null,
@@ -237,7 +263,9 @@ class _PantallaEventoFormularioState extends State<PantallaEventoFormulario> {
                             onPressed: _elegirFecha,
                             icon: const Icon(Icons.calendar_month),
                             label: Text(
-                              _fecha == null ? 'Fecha' : _formatearFecha(_fecha!),
+                              _fecha == null
+                                  ? 'Fecha'
+                                  : Fechas.conDiaSemana(_fecha!),
                             ),
                           ),
                         ),
@@ -259,7 +287,6 @@ class _PantallaEventoFormularioState extends State<PantallaEventoFormulario> {
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
                         labelText: 'Cupo (opcional)',
-                        border: OutlineInputBorder(),
                       ),
                     ),
                     const SizedBox(height: 28),
@@ -274,10 +301,7 @@ class _PantallaEventoFormularioState extends State<PantallaEventoFormulario> {
                             ? const SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
+                                child: CircularProgressIndicator(strokeWidth: 2),
                               )
                             : Text(widget.esEdicion ? 'Guardar cambios' : 'Crear evento'),
                       ),
@@ -296,7 +320,6 @@ class _PantallaEventoFormularioState extends State<PantallaEventoFormulario> {
         enabled: false,
         decoration: const InputDecoration(
           labelText: 'Comunidad',
-          border: OutlineInputBorder(),
         ),
       );
     }
@@ -307,17 +330,13 @@ class _PantallaEventoFormularioState extends State<PantallaEventoFormulario> {
         enabled: false,
         decoration: const InputDecoration(
           labelText: 'Comunidad',
-          border: OutlineInputBorder(),
         ),
       );
     }
 
     return DropdownButtonFormField<int>(
       initialValue: _comunidadSeleccionada,
-      decoration: const InputDecoration(
-        labelText: 'Comunidad',
-        border: OutlineInputBorder(),
-      ),
+      decoration: const InputDecoration(labelText: 'Comunidad'),
       items: _comunidades
           .map((c) => DropdownMenuItem(value: c.id, child: Text(c.nombre)))
           .toList(),

@@ -34,6 +34,21 @@ class Fechas {
     return DateFormat('d MMM y, HH:mm', _locale).format(fecha.toLocal());
   }
 
+  static String conDiaSemana(DateTime fecha) {
+    iniciar();
+    return DateFormat('EEE d MMM y', _locale).format(fecha.toLocal());
+  }
+
+  static String diaSemanaCorto(DateTime fecha) {
+    iniciar();
+    return DateFormat('EEE', _locale).format(fecha.toLocal());
+  }
+
+  static String mesCorto(DateTime fecha) {
+    iniciar();
+    return DateFormat('MMM', _locale).format(fecha.toLocal());
+  }
+
   /// "hoy", "ayer", "hace 3 días" y, a partir de una semana, la fecha corta.
   static String relativa(DateTime fecha, {DateTime? ahora}) {
     final referencia = (ahora ?? DateTime.now()).toLocal();
