@@ -10,6 +10,7 @@ GESTORES = [
     ('gestor_ciap', 'CIAP'),
     ('gestor_robota', 'ROBOTA'),
     ('gestor_ieee', 'IEEE ESPOL Student Branch'),
+    ('gestor_taws', 'TAWS'),
 ]
 
 ESTUDIANTES = ['estudiante1', 'estudiante2', 'estudiante3', 'estudiante4']
@@ -40,6 +41,15 @@ SOLICITUDES = [
     ('estudiante4', 'IEEE ESPOL Student Branch',
      'Consulté los horarios y por ahora no puedo participar.',
      Solicitud.RETIRADA, ''),
+    ('estudiante1', 'TAWS',
+     'Quiero aprender desarrollo web y sumarme a los proyectos del grupo.',
+     Solicitud.PENDIENTE, ''),
+    ('estudiante2', 'TAWS',
+     'Me interesa la investigación en ciencia de datos.',
+     Solicitud.PENDIENTE, ''),
+    ('estudiante3', 'TAWS',
+     'Ya trabajé en un proyecto móvil y me gustaría aportar al club.',
+     Solicitud.APROBADA, 'Bienvenido al equipo, escríbenos al correo del club.'),
 ]
 
 
