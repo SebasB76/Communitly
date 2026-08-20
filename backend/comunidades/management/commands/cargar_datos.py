@@ -40,7 +40,7 @@ COMUNIDADES = [
     ('ROBOTA', 'Tecnología',
      'Club de Robótica de ESPOL. Construcción de robots, talleres de Arduino y competencias '
      'nacionales.',
-     'robota@espol.edu.ec', True, ''),
+     'robota@espol.edu.ec', True, 'robota.jpg'),
     ('GISSC', 'Ciencias',
      'Proporciona nexos entre los miembros del club e investigadores para involucrarse en '
      'actividades multidisciplinares con el uso de los Sistemas de Información Geográfica (GIS) y '
@@ -58,11 +58,7 @@ COMUNIDADES = [
     ('CIMAT', 'Ciencias',
      'Club de Ciencias e Ingeniería en Materiales. Investigación, visitas técnicas y charlas del '
      'área de materiales.',
-     'cimat@espol.edu.ec', True, ''),
-    ('Politécnicas en STEAM', 'Ciencias',
-     'Comunidad que promueve la participación de mujeres en ciencia, tecnología, ingeniería, arte y '
-     'matemáticas.',
-     'steam@espol.edu.ec', True, ''),
+     'cimat@espol.edu.ec', True, 'cimat.jpg'),
     ('IISE ESPOL', 'Ingeniería',
      'Capítulo estudiantil del Institute of Industrial Engineers, dedicado a la difusión de los '
      'conocimientos y aplicaciones de la Ingeniería Industrial.',
@@ -85,11 +81,11 @@ COMUNIDADES = [
     ('SPE ESPOL', 'Ingeniería',
      'Capítulo estudiantil de la Society of Petroleum Engineers. Charlas técnicas y visitas al '
      'sector energético.',
-     'spe@espol.edu.ec', True, ''),
+     'spe@espol.edu.ec', True, 'spe.png'),
     ('SME ESPOL', 'Ingeniería',
      'Capítulo estudiantil SME. Actividades técnicas y networking profesional para estudiantes de '
      'ingeniería.',
-     'sme@espol.edu.ec', True, ''),
+     'sme@espol.edu.ec', True, 'sme.png'),
     ('CLIP', 'Negocios',
      'Impulsa la carrera de Ingeniería en Logística y Transporte mediante la investigación y '
      'desarrollo de proyectos multidisciplinarios que beneficien a la sociedad y a la comunidad '
@@ -98,14 +94,14 @@ COMUNIDADES = [
     ('CADIEC', 'Negocios',
      'Club de Aplicación, Desarrollo e Investigaciones Económicas. Análisis económico, seminarios y '
      'publicaciones.',
-     'cadiec@espol.edu.ec', True, ''),
+     'cadiec@espol.edu.ec', True, 'cadiec.png'),
     ('Tweening', 'Arte',
      'Club de ilustración, animación y guion. Sus actividades permiten a cada miembro mejorar sus '
      'habilidades estéticas y gramaticales, creando piezas originales con estilos diferentes.',
      'tweening@espol.edu.ec', True, 'tweening.png'),
     ('BREIK', 'Arte',
      'Club de comunicación audiovisual. Producción de video, fotografía y proyectos multimedia.',
-     'breik@espol.edu.ec', True, ''),
+     'breik@espol.edu.ec', True, 'breik.webp'),
     ('Argumentum', 'Cultura',
      'Crea líderes de opinión y pensamiento crítico capaces de expandir la cultura del debate y la '
      'oratoria, mediante actividades formativas y evaluativas para sus miembros.',
