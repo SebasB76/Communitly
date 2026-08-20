@@ -126,6 +126,22 @@ extension TemaDelContexto on BuildContext {
 class AppTema {
   const AppTema._();
 
+  /// Ajustes de tipografía sobre la escala de Material. Solo se declara lo que
+  /// cambia: `ThemeData` los mezcla con los tamaños por defecto, así que no hay
+  /// que repetir `fontSize` en cada estilo.
+  ///
+  /// Los titulares por defecto vienen con espaciado positivo, pensado para
+  /// textos pequeños; a 28 px eso se lee suelto y desalineado. Se ciñen, y los
+  /// párrafos ganan altura de línea para que un texto largo respire.
+  static const TextTheme _textos = TextTheme(
+    headlineMedium: TextStyle(fontWeight: FontWeight.w700, letterSpacing: -0.7),
+    headlineSmall: TextStyle(fontWeight: FontWeight.w700, letterSpacing: -0.5),
+    titleLarge: TextStyle(fontWeight: FontWeight.w700, letterSpacing: -0.3),
+    titleMedium: TextStyle(fontWeight: FontWeight.w600),
+    bodyLarge: TextStyle(height: 1.45),
+    bodyMedium: TextStyle(height: 1.45),
+  );
+
   static ThemeData get claro => _construir(Brightness.light);
 
   static ThemeData get oscuro => _construir(Brightness.dark);
@@ -142,11 +158,13 @@ class AppTema {
       colorScheme: colores,
       scaffoldBackgroundColor: colores.surface,
       extensions: [esOscuro ? ColoresEstado.oscuro : ColoresEstado.claro],
+      textTheme: _textos,
       appBarTheme: AppBarTheme(
         // En claro se mantiene el azul institucional; en oscuro ese azul no
         // tiene contraste suficiente y se usa la superficie del esquema.
-        backgroundColor:
-            esOscuro ? colores.surfaceContainerHigh : AppColores.azulEspol,
+        backgroundColor: esOscuro
+            ? colores.surfaceContainerHigh
+            : AppColores.azulEspol,
         foregroundColor: esOscuro ? colores.onSurface : Colors.white,
         elevation: 0,
         scrolledUnderElevation: 2,
@@ -157,36 +175,67 @@ class AppTema {
         clipBehavior: Clip.antiAlias,
         color: colores.surfaceContainerLow,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-          side: BorderSide(color: colores.outlineVariant),
+          borderRadius: BorderRadius.circular(20),
+          // El borde a media opacidad separa la tarjeta del fondo sin dibujar
+          // una caja: a opacidad completa la rejilla parecía una tabla.
+          side: BorderSide(
+            color: colores.outlineVariant.withValues(alpha: 0.6),
+          ),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: colores.surfaceContainerLowest,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 18,
+        ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: colores.outlineVariant),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: colores.outlineVariant),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: colores.primary, width: 1.6),
         ),
       ),
       chipTheme: ChipThemeData(
         side: BorderSide(color: colores.outlineVariant),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        selectedColor: colores.primaryContainer,
+        checkmarkColor: colores.onPrimaryContainer,
+        // Sin `labelStyle` a propósito: el del tema no completa al de Material,
+        // lo reemplaza. Uno sin color deja el texto en negro sobre el chip
+        // oscuro, y uno con color fijo ignora los estados (seleccionado,
+        // deshabilitado). El color del texto lo resuelve Material.
+        shape: const StadiumBorder(),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
+          shape: const StadiumBorder(),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
+          shape: const StadiumBorder(),
+          side: BorderSide(color: colores.outlineVariant),
         ),
       ),
-      snackBarTheme: const SnackBarThemeData(
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(shape: const StadiumBorder()),
+      ),
+      dialogTheme: DialogThemeData(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      ),
+      snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        insetPadding: EdgeInsets.all(16),
+        insetPadding: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
       dividerTheme: DividerThemeData(color: colores.outlineVariant),
     );

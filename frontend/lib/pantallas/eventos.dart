@@ -8,6 +8,7 @@ import '../servicios/api.dart';
 import '../servicios/sesion.dart';
 import '../tema/tema.dart';
 import '../utilidades/fechas.dart';
+import '../widgets/encabezado.dart';
 import '../widgets/esqueletos.dart';
 import '../widgets/rejilla_responsiva.dart';
 import '../widgets/vista_async.dart';
@@ -135,17 +136,13 @@ class _PantallaEventosState extends State<PantallaEventos> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Próximos eventos',
-                    style: context.textos.headlineMedium,
+                  const Encabezado(
+                    icono: Icons.event_outlined,
+                    titulo: 'Próximos eventos',
+                    subtitulo:
+                        'Actividades que publican las comunidades de la ESPOL.',
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Actividades que publican las comunidades de la ESPOL.',
-                    style: context.textos.bodyMedium
-                        ?.copyWith(color: context.textoSecundario),
-                  ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
                   _filtroFecha(),
                   const SizedBox(height: 24),
                   _resultados(),
@@ -195,8 +192,9 @@ class _PantallaEventosState extends State<PantallaEventos> {
       alReintentar: _cargar,
       estaVacio: (lista) => lista.isEmpty,
       iconoVacio: Icons.event_busy_outlined,
-      tituloVacio:
-          hayFiltro ? 'No hay eventos ese día' : 'No hay eventos próximos',
+      tituloVacio: hayFiltro
+          ? 'No hay eventos ese día'
+          : 'No hay eventos próximos',
       detalleVacio: hayFiltro
           ? 'Prueba con otra fecha o quita el filtro.'
           : 'Cuando una comunidad publique uno, aparecerá aquí.',
@@ -207,8 +205,9 @@ class _PantallaEventosState extends State<PantallaEventos> {
         children: [
           Text(
             lista.length == 1 ? '1 evento' : '${lista.length} eventos',
-            style: context.textos.bodyMedium
-                ?.copyWith(color: context.textoSecundario),
+            style: context.textos.bodyMedium?.copyWith(
+              color: context.textoSecundario,
+            ),
           ),
           const SizedBox(height: 12),
           RejillaResponsiva(

@@ -71,38 +71,53 @@ class _PantallaLoginState extends State<PantallaLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: context.colores.surfaceContainerLow,
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: AutofillGroup(
-                  child: Form(
-                    key: _formulario,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _encabezado(),
-                        const SizedBox(height: 28),
-                        _campoUsuario(),
-                        const SizedBox(height: 16),
-                        _campoContrasena(),
-                        if (_error.isNotEmpty) ...[
+      // Degradado en vez de un color plano: los colores salen del esquema, así
+      // que funciona igual en claro y en oscuro sin una segunda paleta.
+      body: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              context.colores.primaryContainer,
+              context.colores.surfaceContainerLow,
+            ],
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: Card(
+                // La tarjeta flota sobre el degradado; sin sombra se pierde.
+                elevation: 6,
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: AutofillGroup(
+                    child: Form(
+                      key: _formulario,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _encabezado(),
+                          const SizedBox(height: 28),
+                          _campoUsuario(),
                           const SizedBox(height: 16),
-                          _mensajeError(),
+                          _campoContrasena(),
+                          if (_error.isNotEmpty) ...[
+                            const SizedBox(height: 16),
+                            _mensajeError(),
+                          ],
+                          const SizedBox(height: 24),
+                          _botonEntrar(),
+                          if (kDebugMode) ...[
+                            const SizedBox(height: 20),
+                            _credencialesDePrueba(),
+                          ],
                         ],
-                        const SizedBox(height: 24),
-                        _botonEntrar(),
-                        if (kDebugMode) ...[
-                          const SizedBox(height: 20),
-                          _credencialesDePrueba(),
-                        ],
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -131,8 +146,9 @@ class _PantallaLoginState extends State<PantallaLogin> {
         Text(
           'Entra con tu cuenta institucional',
           textAlign: TextAlign.center,
-          style: context.textos.bodyMedium
-              ?.copyWith(color: context.textoSecundario),
+          style: context.textos.bodyMedium?.copyWith(
+            color: context.textoSecundario,
+          ),
         ),
       ],
     );
@@ -193,8 +209,11 @@ class _PantallaLoginState extends State<PantallaLogin> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.error_outline,
-                size: 20, color: context.colores.onErrorContainer),
+            Icon(
+              Icons.error_outline,
+              size: 20,
+              color: context.colores.onErrorContainer,
+            ),
             const SizedBox(width: 10),
             Expanded(
               child: Text(

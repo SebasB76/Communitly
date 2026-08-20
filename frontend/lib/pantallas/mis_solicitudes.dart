@@ -4,6 +4,7 @@ import '../estado/estado_async.dart';
 import '../modelos/solicitud.dart';
 import '../servicios/api_solicitudes.dart';
 import '../tema/tema.dart';
+import '../widgets/encabezado.dart';
 import '../widgets/esqueletos.dart';
 import '../widgets/rejilla_responsiva.dart';
 import '../widgets/vista_async.dart';
@@ -57,8 +58,9 @@ class _PantallaMisSolicitudesState extends State<PantallaMisSolicitudes> {
     setState(() => _enCurso.add(solicitud.id));
 
     try {
-      final mensaje =
-          await ApiSolicitudes.retirarSolicitud(solicitud.comunidadId);
+      final mensaje = await ApiSolicitudes.retirarSolicitud(
+        solicitud.comunidadId,
+      );
       await _cargar();
       if (mounted) mostrarAviso(context, mensaje);
     } catch (error) {
@@ -97,17 +99,12 @@ class _PantallaMisSolicitudesState extends State<PantallaMisSolicitudes> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Estado de tus solicitudes',
-                    style: context.textos.headlineMedium,
+                  const Encabezado(
+                    icono: Icons.assignment_outlined,
+                    titulo: 'Estado de tus solicitudes',
+                    subtitulo: 'Aquí ves en qué va cada comunidad a la que postulaste.',
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Aquí ves en qué va cada comunidad a la que postulaste.',
-                    style: context.textos.bodyMedium
-                        ?.copyWith(color: context.textoSecundario),
-                  ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
                   // Los filtros siguen visibles mientras recarga: el resumen no
                   // depende del filtro activo.
                   if (lista != null)
@@ -149,8 +146,9 @@ class _PantallaMisSolicitudesState extends State<PantallaMisSolicitudes> {
             lista.solicitudes.length == 1
                 ? '1 solicitud'
                 : '${lista.solicitudes.length} solicitudes',
-            style: context.textos.bodyMedium
-                ?.copyWith(color: context.textoSecundario),
+            style: context.textos.bodyMedium?.copyWith(
+              color: context.textoSecundario,
+            ),
           ),
           const SizedBox(height: 12),
           RejillaResponsiva(

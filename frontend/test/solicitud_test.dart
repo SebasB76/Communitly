@@ -6,6 +6,8 @@ import 'package:communitly_frontend/pantallas/solicitudes_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'ayuda.dart';
+
 /// Copia de una respuesta real de `GET /api/solicitudes/`.
 Map<String, dynamic> solicitudAprobada() => {
       'id': 5,
@@ -203,6 +205,47 @@ void main() {
       expect(find.text('Tengo experiencia con Arduino'), findsOneWidget);
       expect(find.text('Bienvenido, te esperamos el viernes.'), findsOneWidget);
       expect(find.textContaining('gestor_robota'), findsOneWidget);
+    });
+
+    testWidgets('el diálogo cabe en un teléfono y devuelve lo escrito',
+        (WidgetTester tester) async {
+      // 360 px es el ancho crítico: la consigna larga y el campo de tres
+      // líneas son justo lo que antes se desbordaba.
+      await tester.binding.setSurfaceSize(const Size(360, 640));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      String? respuesta;
+
+      await montar(
+        tester,
+        Scaffold(
+          body: Builder(
+            builder: (context) => TextButton(
+              onPressed: () async => respuesta = await pedirTexto(
+                context,
+                titulo: 'Solicitar ingreso',
+                etiqueta: 'Cuéntale al gestor por qué te interesa (opcional)',
+                boton: 'Enviar solicitud',
+              ),
+              child: const Text('abrir'),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('abrir'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Cuéntale al gestor por qué te interesa (opcional)'),
+        findsOneWidget,
+      );
+
+      await tester.enterText(find.byType(TextField), 'Me interesa la robótica');
+      await tester.tap(find.text('Enviar solicitud'));
+      await tester.pumpAndSettle();
+
+      expect(respuesta, 'Me interesa la robótica');
     });
   });
 }
