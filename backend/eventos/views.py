@@ -35,6 +35,11 @@ def obtener_gestor(request, cuerpo=None):
         return None
 
 
+def es_gestor(usuario, comunidad):
+    """Solo un gestor autorizado puede crear, editar o cancelar eventos de su comunidad."""
+    return usuario is not None and comunidad.gestores.filter(id=usuario.id).exists()
+
+
 def evento_a_dict(evento):
     return {
         'id': evento.id,
@@ -120,6 +125,9 @@ def _crear_evento(request):
     if comunidad is None:
         return responder({'error': 'La comunidad no existe o no está activa'}, status=404)
 
+    if not es_gestor(gestor, comunidad):
+        return responder({'error': f'No es gestor de {comunidad.nombre}'}, status=403)
+
     titulo = (cuerpo.get('titulo') or '').strip()
     descripcion = (cuerpo.get('descripcion') or '').strip()
     lugar = (cuerpo.get('lugar') or '').strip()
@@ -188,6 +196,9 @@ def _editar_evento(request, evento):
     if gestor is None:
         return responder({'error': 'Debe enviar un gestor_id válido'}, status=400)
 
+    if not es_gestor(gestor, evento.comunidad):
+        return responder({'error': f'No es gestor de {evento.comunidad.nombre}'}, status=403)
+
     if evento.cancelado():
         return responder({'error': 'No se puede editar un evento cancelado'}, status=400)
 
@@ -241,6 +252,9 @@ def _cancelar_evento(request, evento):
     gestor = obtener_gestor(request)
     if gestor is None:
         return responder({'error': 'Debe enviar un gestor_id válido'}, status=400)
+
+    if not es_gestor(gestor, evento.comunidad):
+        return responder({'error': f'No es gestor de {evento.comunidad.nombre}'}, status=403)
 
     if evento.cancelado():
         return responder({'error': f'El evento "{evento.titulo}" ya estaba cancelado'}, status=400)
