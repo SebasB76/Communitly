@@ -232,14 +232,33 @@ class _DialogoTextoState extends State<_DialogoTexto> {
       title: Text(widget.titulo),
       content: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 420),
-        child: TextField(
-          controller: _controlador,
-          autofocus: true,
-          maxLength: 500,
-          maxLines: 3,
-          decoration: InputDecoration(labelText: widget.etiqueta),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // La consigna va arriba y no como `labelText`: son frases de
+            // cuarenta caracteres, y flotando dentro del borde se recortaban.
+            Text(
+              widget.etiqueta,
+              style: context.textos.bodyMedium
+                  ?.copyWith(color: context.textoSecundario),
+            ),
+            const SizedBox(height: 14),
+            TextField(
+              controller: _controlador,
+              autofocus: true,
+              maxLength: 500,
+              // Alto fijo de tres líneas que crece hasta cinco: así el diálogo
+              // no da un salto en cuanto se escribe la segunda línea.
+              minLines: 3,
+              maxLines: 5,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: const InputDecoration(hintText: 'Escribe aquí…'),
+            ),
+          ],
         ),
       ),
+      actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),

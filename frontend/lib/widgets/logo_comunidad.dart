@@ -21,9 +21,11 @@ class LogoComunidad extends StatelessWidget {
       height: tamano,
       padding: EdgeInsets.all(tamano * 0.08),
       decoration: BoxDecoration(
+        // El fondo se queda blanco a propósito: los logos vienen pensados para
+        // papel y en oscuro se perderían. El borde sí sale del tema.
         color: Colors.white,
-        borderRadius: BorderRadius.circular(tamano * 0.2),
-        border: Border.all(color: Colors.black12),
+        borderRadius: BorderRadius.circular(tamano * 0.24),
+        border: Border.all(color: context.colores.outlineVariant),
       ),
       clipBehavior: Clip.antiAlias,
       child: logo.isEmpty ? _inicial(context) : _imagen(context),

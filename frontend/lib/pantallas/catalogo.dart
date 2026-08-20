@@ -11,6 +11,7 @@ import '../servicios/api.dart';
 import '../servicios/preferencias.dart';
 import '../servicios/sesion.dart';
 import '../tema/tema.dart';
+import '../widgets/encabezado.dart';
 import '../widgets/esqueletos.dart';
 import '../widgets/logo_comunidad.dart';
 import '../widgets/rejilla_responsiva.dart';
@@ -136,21 +137,16 @@ class _PantallaCatalogoState extends State<PantallaCatalogo> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Descubre tu próxima comunidad',
-                    style: context.textos.headlineMedium,
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    usuario == null
+                  Encabezado(
+                    icono: Icons.groups_2_outlined,
+                    titulo: 'Descubre tu próxima comunidad',
+                    subtitulo: usuario == null
                         ? ''
                         : usuario.esGestor
-                            ? 'Conectado como ${usuario.usuario} · gestor'
-                            : 'Conectado como ${usuario.usuario}',
-                    style: context.textos.bodyMedium
-                        ?.copyWith(color: context.textoSecundario),
+                        ? 'Conectado como ${usuario.usuario} · gestor'
+                        : 'Conectado como ${usuario.usuario}',
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
                   _campoBusqueda(),
                   const SizedBox(height: 16),
                   _filtros(),
@@ -185,9 +181,9 @@ class _PantallaCatalogoState extends State<PantallaCatalogo> {
           value: 'tema',
           child: ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: Icon(esOscuro
-                ? Icons.light_mode_outlined
-                : Icons.dark_mode_outlined),
+            leading: Icon(
+              esOscuro ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+            ),
             title: Text(esOscuro ? 'Tema claro' : 'Tema oscuro'),
           ),
         ),
@@ -204,9 +200,11 @@ class _PantallaCatalogoState extends State<PantallaCatalogo> {
           child: ListTile(
             contentPadding: EdgeInsets.zero,
             leading: const Icon(Icons.logout),
-            title: Text(usuario == null
-                ? 'Cerrar sesión'
-                : 'Cerrar sesión (${usuario.usuario})'),
+            title: Text(
+              usuario == null
+                  ? 'Cerrar sesión'
+                  : 'Cerrar sesión (${usuario.usuario})',
+            ),
           ),
         ),
       ],
@@ -279,8 +277,9 @@ class _PantallaCatalogoState extends State<PantallaCatalogo> {
             lista.length == 1
                 ? '1 comunidad encontrada'
                 : '${lista.length} comunidades encontradas',
-            style: context.textos.bodyMedium
-                ?.copyWith(color: context.textoSecundario),
+            style: context.textos.bodyMedium?.copyWith(
+              color: context.textoSecundario,
+            ),
           ),
           const SizedBox(height: 12),
           RejillaResponsiva(
@@ -303,16 +302,14 @@ class _PantallaCatalogoState extends State<PantallaCatalogo> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  LogoComunidad(
-                    logo: comunidad.logo,
-                    nombre: comunidad.nombre,
-                  ),
+                  LogoComunidad(logo: comunidad.logo, nombre: comunidad.nombre),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       comunidad.nombre,
-                      style: context.textos.titleMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                      style: context.textos.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   if (comunidad.siguiendo)
@@ -327,10 +324,24 @@ class _PantallaCatalogoState extends State<PantallaCatalogo> {
                 ],
               ),
               const SizedBox(height: 4),
-              Text(
-                '${comunidad.categoria} · ${comunidad.seguidores} seguidores',
-                style: context.textos.bodySmall
-                    ?.copyWith(color: context.textoSecundario),
+              // La categoría destacada y el conteo en gris: es la línea que se
+              // repite en cada tarjeta, y así se distingue de un tirón.
+              Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                      text: comunidad.categoria,
+                      style: TextStyle(
+                        color: context.colores.primary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    TextSpan(text: ' · ${comunidad.seguidores} seguidores'),
+                  ],
+                ),
+                style: context.textos.bodySmall?.copyWith(
+                  color: context.textoSecundario,
+                ),
               ),
               const SizedBox(height: 8),
               Text(

@@ -4,6 +4,7 @@ import '../estado/estado_async.dart';
 import '../modelos/solicitud.dart';
 import '../servicios/api_solicitudes.dart';
 import '../tema/tema.dart';
+import '../widgets/encabezado.dart';
 import '../widgets/esqueletos.dart';
 import '../widgets/rejilla_responsiva.dart';
 import '../widgets/vista_async.dart';
@@ -123,15 +124,12 @@ class _PantallaBandejaGestorState extends State<PantallaBandejaGestor> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Bandeja del gestor',
-                      style: context.textos.headlineMedium),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Revisa cada postulación y respóndela con una observación.',
-                    style: context.textos.bodyMedium
-                        ?.copyWith(color: context.textoSecundario),
+                  const Encabezado(
+                    icono: Icons.inbox_outlined,
+                    titulo: 'Bandeja del gestor',
+                    subtitulo: 'Revisa cada postulación y respóndela con una observación.',
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
                   if (lista != null)
                     FiltroEstados(
                       estadoActivo: _estadoActivo,
@@ -168,8 +166,9 @@ class _PantallaBandejaGestorState extends State<PantallaBandejaGestor> {
             lista.solicitudes.length == 1
                 ? '1 solicitud'
                 : '${lista.solicitudes.length} solicitudes',
-            style: context.textos.bodyMedium
-                ?.copyWith(color: context.textoSecundario),
+            style: context.textos.bodyMedium?.copyWith(
+              color: context.textoSecundario,
+            ),
           ),
           const SizedBox(height: 12),
           RejillaResponsiva(

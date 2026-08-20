@@ -1,6 +1,8 @@
 // Pruebas de las piezas compartidas: la rejilla responsiva, el bloque de
 // mensaje con salida, y el formato de fechas.
 
+import 'dart:math';
+
 import 'package:communitly_frontend/estado/estado_async.dart';
 import 'package:communitly_frontend/tema/tema.dart';
 import 'package:communitly_frontend/utilidades/fechas.dart';
@@ -8,6 +10,7 @@ import 'package:communitly_frontend/widgets/mensaje_centrado.dart';
 import 'package:communitly_frontend/widgets/rejilla_responsiva.dart';
 import 'package:communitly_frontend/widgets/vista_async.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'ayuda.dart';
@@ -184,6 +187,57 @@ void main() {
         expect(colores!.porEstado('pendiente'), isNot(colores.aprobada));
         // Un estado desconocido no debe romper la etiqueta.
         expect(colores.porEstado('inventado'), colores.retirada);
+      }
+    });
+
+    testWidgets('la etiqueta de un chip se ve en oscuro', (tester) async {
+      // Un `labelStyle` sin color en el `ChipThemeData` reemplaza al del tema
+      // en vez de completarlo: el chip pierde el color y el motor pinta el
+      // texto en negro, invisible sobre el chip oscuro.
+      for (final seleccionado in [false, true]) {
+        await tester.pumpWidget(MaterialApp(
+          theme: AppTema.oscuro,
+          home: Scaffold(
+            body: FilterChip(
+              label: const Text('Ciencias'),
+              selected: seleccionado,
+              onSelected: (_) {},
+            ),
+          ),
+        ));
+
+        final parrafo = tester.renderObject<RenderParagraph>(
+          find.text('Ciencias'),
+        );
+        final color = parrafo.text.style?.color;
+
+        expect(color, isNotNull, reason: 'sin color el motor pinta en negro');
+        expect(color!.computeLuminance(), greaterThan(0.4));
+      }
+    });
+
+    test('los pares contenedor/contenido se leen en claro y en oscuro', () {
+      // Los encabezados y el bloque de fecha pintan contenido sobre esos dos
+      // contenedores. Cambiar la semilla o la variante de `fromSeed` puede
+      // dejar el par en 4,5:1 sin que salte ninguna prueba, así que el mínimo
+      // queda escrito aquí.
+      double contraste(Color fondo, Color texto) {
+        final a = fondo.computeLuminance();
+        final b = texto.computeLuminance();
+        return (max(a, b) + 0.05) / (min(a, b) + 0.05);
+      }
+
+      for (final tema in [AppTema.claro, AppTema.oscuro]) {
+        final colores = tema.colorScheme;
+
+        expect(
+          contraste(colores.primaryContainer, colores.onPrimaryContainer),
+          greaterThan(4.5),
+        );
+        expect(
+          contraste(colores.secondaryContainer, colores.onSecondaryContainer),
+          greaterThan(4.5),
+        );
       }
     });
   });
