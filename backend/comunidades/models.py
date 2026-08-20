@@ -14,6 +14,7 @@ class Comunidad(models.Model):
     descripcion = models.TextField()
     categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT, related_name='comunidades')
     contacto = models.EmailField(blank=True)
+    logo = models.CharField(max_length=120, blank=True)
     activa = models.BooleanField(default=True)
     creada_en = models.DateTimeField(auto_now_add=True)
     # responsables de la comunidad; controlan eventos (RF-04) y solicitudes (RF-06)

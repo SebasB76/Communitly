@@ -6,6 +6,7 @@ class Comunidad {
   final String descripcion;
   final String categoria;
   final String contacto;
+  final String logo;
   final int seguidores;
   final bool siguiendo;
 
@@ -20,6 +21,7 @@ class Comunidad {
     required this.descripcion,
     required this.categoria,
     required this.contacto,
+    this.logo = '',
     required this.seguidores,
     required this.siguiendo,
     this.estadoMiSolicitud = '',
@@ -38,6 +40,7 @@ class Comunidad {
       descripcion: json.texto('descripcion'),
       categoria: json.texto('categoria'),
       contacto: json.texto('contacto'),
+      logo: json.texto('logo'),
       seguidores: json.entero('seguidores'),
       siguiendo: json.booleano('siguiendo'),
       // El backend puede mandarlo como objeto o como texto suelto; los dos se

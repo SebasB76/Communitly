@@ -10,6 +10,7 @@ import '../servicios/api.dart';
 import '../servicios/sesion.dart';
 import '../tema/tema.dart';
 import '../widgets/esqueletos.dart';
+import '../widgets/logo_comunidad.dart';
 import '../widgets/vista_async.dart';
 import 'eventos.dart';
 import 'solicitudes_widgets.dart';
@@ -110,6 +111,12 @@ class _PantallaDetalleState extends State<PantallaDetalle> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  LogoComunidad(
+                    logo: comunidad.logo,
+                    nombre: comunidad.nombre,
+                    tamano: 72,
+                  ),
+                  const SizedBox(height: 12),
                   Text(
                     comunidad.nombre,
                     style: context.textos.headlineMedium

@@ -11,6 +11,7 @@ import '../servicios/preferencias.dart';
 import '../servicios/sesion.dart';
 import '../tema/tema.dart';
 import '../widgets/esqueletos.dart';
+import '../widgets/logo_comunidad.dart';
 import '../widgets/rejilla_responsiva.dart';
 import '../widgets/vista_async.dart';
 import 'eventos.dart';
@@ -275,6 +276,11 @@ class _PantallaCatalogoState extends State<PantallaCatalogo> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  LogoComunidad(
+                    logo: comunidad.logo,
+                    nombre: comunidad.nombre,
+                  ),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       comunidad.nombre,
